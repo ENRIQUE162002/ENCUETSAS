@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leogym · Encuesta de Satisfacción</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #f59e0b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --success: #22c55e;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      max-width: 650px;
+      width: 100%;
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    header {
+      border-bottom: 1px solid #334155;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .logo-container {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      padding: 4px;
+      margin: 0 auto 15px auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    header h1 { color: var(--accent); font-size: 1.6rem; margin-bottom: 6px; }
+    .meta-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--muted);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 6px;
+      background: #334155;
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .online { background: #166534; color: #4ade80; }
+    .offline { background: #991b1b; color: #fca5a5; }
+    
+    section {
+      background: #0f172a;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      margin-bottom: 20px;
+    }
+    section h2 {
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    section p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
+    input[type="text"], input[type="email"], select, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #1e293b;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      cursor: pointer;
+      font-weight: normal;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    .banner {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      display: none;
+      font-size: 0.9rem;
+      text-align: center;
+      font-weight: 500;
+    }
+    .banner-success { background: #166534; color: #fff; }
+    .banner-offline { background: #9a3412; color: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <!-- Logo embebido en línea -->
+    <div class="logo-container">
+      <img src="https://lh3.googleusercontent.com/d/1GwjEq07HWHxXk9YM-k_exyRU0LqMm4ct18bvRHOB5Zc" alt="Leogym Logo" class="logo-img" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'50\' fill=\'%23ffffff\'/><text x=\'50%\' y=\'55%\' font-size=\'18\' font-weight=\'bold\' text-anchor=\'middle\' fill=\'%23000000\'>LEOGYM</text></svg>';">
+    </div>
+    <h1>LEOGYM · Encuesta de Satisfacción</h1>
+    <div class="meta-info">
+      <span>Encuestador: <strong id="lbl-encuestador" style="color: var(--text);">—</strong></span>
+      <span>Dispositivo: Híbrido (Offline / Online)</span>
+    </div>
+  </header>
+
+  <div class="status-bar">
+    <span>Red: <span id="net-status" class="badge online">En línea</span></span>
+    <span>Pendientes de sincronizar: <strong id="pending-count" style="color: var(--accent);">0</strong></span>
+  </div>
+
+  <div id="msg-banner" class="banner"></div>
+
+  <form id="quiz-form">
+    <div class="form-group">
+      <label for="encuestador">Nombre del Encuestador / Staff *</label>
+      <input type="text" id="encuestador" placeholder="Ej. Daniel" required>
+    </div>
+
+    <section>
+      <h2>Consentimiento informado y confidencialidad</h2>
+      <p>Esta encuesta busca conocer los hábitos y la opinión de los socios de <strong>Leogym</strong> para mejorar nuestros servicios y rutinas. Su participación es <strong>voluntaria</strong> y puede retirarse en cualquier momento sin consecuencia alguna.</p>
+      <p>Sus respuestas serán tratadas de forma <strong>confidencial</strong> y utilizadas únicamente con fines estadísticos y de mejora del gimnasio. El tratamiento de la información se rige por la <strong>Ley Orgánica de Protección de Datos Personales (LOPDP)</strong>. Al continuar, usted acepta participar voluntariamente.</p>
+      
+      <div class="form-group" style="margin-top: 12px; margin-bottom: 0;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <input type="checkbox" id="consentimiento" required style="width: 18px; height: 18px;">
+          <span><strong>Acepto los términos de consentimiento y confidencialidad</strong></span>
+        </label>
+      </div>
+    </section>
+
+    <div class="form-group">
+      <label for="nombre">Nombre del Socio (Opcional)</label>
+      <input type="text" id="nombre" placeholder="Nombre completo o iniciales">
+    </div>
+
+    <div class="form-group">
+      <label for="edad">Rango de Edad *</label>
+      <select id="edad" required>
+        <option value="">Selecciona...</option>
+        <option value="Menos de 18">Menos de 18</option>
+        <option value="18–25">18–25</option>
+        <option value="26–35">26–35</option>
+        <option value="36–50">36–50</option>
+        <option value="Más de 50">Más de 50</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="antiguedad">Tiempo como socio en Leogym *</label>
+      <select id="antiguedad" required>
+        <option value="">Selecciona...</option>
+        <option value="Menos de 3 meses">Menos de 3 meses</option>
+        <option value="3 a 12 meses">3 a 12 meses</option>
+        <option value="Más de 1 año">Más de 1 año</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="frecuencia">Veces por semana que asiste *</label>
+      <select id="frecuencia" required>
+        <option value="">Selecciona...</option>
+        <option value="1 a 2 días">1 a 2 días</option>
+        <option value="3 a 4 días">3 a 4 días</option>
+        <option value="5 o más">5 o más días</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="satisfaccion">Satisfacción general (1 al 5) *</label>
+      <select id="satisfaccion" required>
+        <option value="5">5 - Excelente</option>
+        <option value="4">4 - Buena</option>
+        <option value="3">3 - Regular</option>
+        <option value="2">2 - Mala</option>
+        <option value="1">1 - Pésima</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="equipos">Limpieza y estado de los equipos (1 al 5) *</label>
+      <select id="equipos" required>
+        <option value="5">5 - Excelente</option>
+        <option value="4">4 - Bueno</option>
+        <option value="3">3 - Aceptable</option>
+        <option value="2">2 - Deficiente</option>
+        <option value="1">1 - Muy malo</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Qué valora más (Selecciona varias opciones)</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" name="valorado" value="Equipos"> Equipos</label>
+        <label><input type="checkbox" name="valorado" value="Entrenadores"> Entrenadores</label>
+        <label><input type="checkbox" name="valorado" value="Limpieza"> Limpieza</label>
+        <label><input type="checkbox" name="valorado" value="Horarios"> Horarios</label>
+        <label><input type="checkbox" name="valorado" value="Ambiente"> Ambiente</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="mejora">Qué mejorar</label>
+      <textarea id="mejora" rows="3" placeholder="Sugerencias o comentarios..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="contacto">Correo o WhatsApp (Opcional)</label>
+      <input type="text" id="contacto" placeholder="Para contacto o sorteos">
+    </div>
+
+    <button type="submit" id="btn-submit">Guardar y Enviar Respuesta</button>
+  </form>
+
+  <section style="margin-top: 24px;">
+    <h2>Respuestas guardadas en este dispositivo</h2>
+    <p>Si estás sin conexión, las encuestas se acumulan aquí y se envían de forma automática al recuperar internet.</p>
+    <ul id="pending-list" style="list-style: disc; padding-left: 20px; font-size: 0.85rem; color: var(--muted);">
+      <li>No hay respuestas pendientes.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+  // Reemplaza esta constante con la URL de tu aplicación web de Google Apps Script
+  const WEB_APP_URL = "TU_URL_DE_APPS_SCRIPT_AQUI";
+
+  const form = document.getElementById('quiz-form');
+  const netStatus = document.getElementById('net-status');
+  const pendingCount = document.getElementById('pending-count');
+  const pendingList = document.getElementById('pending-list');
+  const banner = document.getElementById('msg-banner');
+  const inputEncuestador = document.getElementById('encuestador');
+  const lblEncuestador = document.getElementById('lbl-encuestador');
+
+  let locationData = { latitud: "", longitud: "", precision_m: "", ubicacion_estado: "sin_permiso" };
+
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        locationData = {
+          latitud: pos.coords.latitude,
+          longitud: pos.coords.longitude,
+          precision_m: pos.coords.accuracy,
+          ubicacion_estado: "permitida"
+        };
+      },
+      () => { locationData.ubicacion_estado = "denegada"; }
+    );
+  }
+
+  inputEncuestador.addEventListener('input', (e) => {
+    lblEncuestador.textContent = e.target.value.trim() || "—";
+  });
+
+  function updateNetworkStatus() {
+    if (navigator.onLine) {
+      netStatus.textContent = "En línea";
+      netStatus.className = "badge online";
+      syncOfflineData();
+    } else {
+      netStatus.textContent = "Sin conexión";
+      netStatus.className = "badge offline";
+    }
+    renderPendingList();
+  }
+
+  function getStoredResponses() {
+    return JSON.parse(localStorage.getItem('leogym_pending_responses') || '[]');
+  }
+
+  function renderPendingList() {
+    const list = getStoredResponses();
+    pendingCount.textContent = list.length;
+    if (list.length === 0) {
+      pendingList.innerHTML = '<li>No hay respuestas pendientes.</li>';
+    } else {
+      pendingList.innerHTML = list.map((item, idx) => `<li>#${idx + 1} - Socio: ${item.nombre || 'Anónimo'} (${new Date(item.fecha).toLocaleTimeString()})</li>`).join('');
+    }
+  }
+
+  window.addEventListener('online', updateNetworkStatus);
+  window.addEventListener('offline', updateNetworkStatus);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const valorados = Array.from(document.querySelectorAll('input[name="valorado"]:checked')).map(c => c.value);
+    const ahora = new Date().toISOString();
+    
+    const payload = {
+      id: crypto.randomUUID(),
+      fecha: ahora,
+      encuestador: inputEncuestador.value,
+      consentimiento: document.getElementById('consentimiento').checked ? "Acepto" : "No",
+      consentimiento_fecha: ahora,
+      ...locationData,
+      nombre: document.getElementById('nombre').value,
+      edad: document.getElementById('edad').value,
+      antiguedad: document.getElementById('antiguedad').value,
+      frecuencia: document.getElementById('frecuencia').value,
+      satisfaccion: document.getElementById('satisfaccion').value,
+      equipos: document.getElementById('equipos').value,
+      valorado: valorados,
+      mejora: document.getElementById('mejora').value,
+      contacto: document.getElementById('contacto').value
+    };
+
+    if (navigator.onLine) {
+      try {
+        await sendToGoogleSheets([payload]);
+        showBanner("¡Respuesta enviada a Google Sheets con éxito!", "success");
+      } catch (err) {
+        saveLocally(payload);
+        showBanner("Fallo de red al enviar. Guardado localmente en el dispositivo.", "offline");
+      }
+    } else {
+      saveLocally(payload);
+      showBanner("Sin internet. Respuesta almacenada de forma offline en el equipo.", "offline");
+    }
+
+    form.reset();
+    lblEncuestador.textContent = "—";
+    document.getElementById('consentimiento').checked = false;
+    renderPendingList();
+  });
+
+  function saveLocally(data) {
+    const list = getStoredResponses();
+    list.push(data);
+    localStorage.setItem('leogym_pending_responses', JSON.stringify(list));
+  }
+
+  async function sendToGoogleSheets(dataArray) {
+    await fetch(WEB_APP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dataArray)
+    });
+  }
+
+  async function syncOfflineData() {
+    const list = getStoredResponses();
+    if (list.length === 0) return;
+
+    try {
+      await sendToGoogleSheets(list);
+      localStorage.removeItem('leogym_pending_responses');
+      renderPendingList();
+      showBanner(`¡Conexión restablecida! Se sincronizaron ${list.length} respuestas pendientes.`, "success");
+    } catch (e) {
+      console.error("Error al sincronizar datos offline", e);
+    }
+  }
+
+  function showBanner(text, type) {
+    banner.textContent = text;
+    banner.className = `banner ${type === 'success' ? 'banner-success' : 'banner-offline'}`;
+    banner.style.display = 'block';
+    setTimeout(() => { banner.style.display = 'none'; }, 5000);
+  }
+
+  updateNetworkStatus();
+</script>
+</body>
+</html>
